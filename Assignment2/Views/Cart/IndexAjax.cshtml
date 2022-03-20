@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Assignment2.Models.CartItem>
+@using Assignment2.Models
+@{
+    double TotalPrice = 0;
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<table class="table table-bordered" style="margin-left: auto; margin-right: auto;">
+    <tr>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.Product.Image)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </th>
+        <th class="text-center">Action</th>
+    </tr>
+    @if (Session["cart"] != null)
+    {
+        foreach (CartItem item in (List<CartItem>)Session["cart"])
+        {
+            TotalPrice += item.Quantity * item.Product.Price;
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td class="text-center">
+                    <image src="@Html.DisplayFor(modelItem => item.Product.Image)" style="width:100px;height:100px" />
+                </td>
+                <td class="text-center">
+                    <div style="display:flex; justify-content:center; align-items:center">
+                        <input type="hidden" name="Id" value="@item.Id">
+                        <a href="Cart/ChangeQuantity?Id=@item.Id&ChangeType=minus" data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#CartTable" data-ajax-success="ChangeCartQuantity" style="margin-right:10px"><i class="fas fa-minus"></i></a>
+                        <input type="number" style="width:50px;text-align:center" disabled value="@item.Quantity">
+                        <a href="Cart/ChangeQuantity?Id=@item.Id&ChangeType=plus" data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#CartTable" data-ajax-success="ChangeCartQuantity" style="margin-left:10px"><i class="fas fa-plus"></i></a>
+                    </div>
+                </td>
+                <td class="text-center">
+                    @String.Format(info, "{0:c}", item.TotalPrice)
+                </td>
+                <td class="text-center">
+                    @Ajax.ActionLink("Remove", "Remove", new { id = item.Id }, new AjaxOptions()
+                    {
+                        HttpMethod = "GET",
+                        UpdateTargetId = "CartTable",
+                        InsertionMode = InsertionMode.Replace,
+                        Confirm = "Are you sure you want to delete it?",
+                        OnComplete = "ChangeCartQuantity"
+                    })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5" class="text-center" style="padding-bottom:20px">
+                <h3>
+                    You have no products in your cart!
+                </h3>
+                <a class="btn btn-danger" href="/Products">Buy Now!</a>
+            </td>
+        </tr>
+    }
+</table>
+@if (Session["cart"] != null)
+{
+    <div style="display:flex;justify-content:right">
+        <h2 style="font-weight:bold;color:red">Total Price: </h2>
+        <h2 style="font-weight:bold;color:red"> @String.Format(info, "{0:c}", TotalPrice)</h2>
+    </div>
+}

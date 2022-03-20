@@ -1,0 +1,103 @@
+﻿@using Assignment2.Models
+@{
+    int quantity = 0;
+    if(Session["cart"] != null)
+    {
+        foreach (CartItem item in (List<CartItem>)Session["cart"])
+         {
+            quantity += item.Quantity;
+         }
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" />
+    <style>
+        a:hover{
+            text-decoration: none;
+        }
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .searchForm{
+            display:flex;
+            justify-content:center;
+        }
+
+        #productList{
+            display:flex;
+            flex-wrap: wrap;
+            margin:auto;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            text-align: center;
+            font-family: arial;
+            margin:20px 20px 20px 20px;
+        }
+
+        .price {
+            color: grey;
+            font-size: 22px;
+        }
+
+        .card button {
+            border: none;
+            outline: 0;
+            padding: 12px;
+            color: white;
+            background-color: #000;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+        }
+
+        .card button a{
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Shopping Cart", "Index", "Products", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav" style="">
+                    <li>@Html.ActionLink("Products", "Index", "Products")</li>
+                </ul>
+                <ul class="nav navbar-nav" id="cart-button">
+                    <li>@Html.ActionLink("Cart: ", "Index", "Cart")</li>
+                    <li><p id="QuantityCart">@quantity</p></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
